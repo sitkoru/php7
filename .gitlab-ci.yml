@@ -1,0 +1,28 @@
+stages:
+  - build
+  - deploy
+
+image: docker:latest
+
+variables:
+  DOCKER_DRIVER: overlay2
+
+build:
+  stage: build
+  tags:
+    - dind
+  services:
+    - docker:dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $HUB_URL
+    - docker build --no-cache . -t $HUB_URL/servers/docker-php7:1.0.0-$CI_PIPELINE_ID
+    - docker push $HUB_URL/servers/docker-php7:1.0.0-$CI_PIPELINE_ID
+
+deploy:
+  stage: deploy
+  when: manual
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $HUB_URL
+    - docker pull $HUB_URL/servers/docker-php7:1.0.0-$CI_PIPELINE_ID
+    - docker tag $HUB_URL/servers/docker-php7:1.0.0-$CI_PIPELINE_ID $HUB_URL/servers/docker-php7:latest
+    - docker push $HUB_URL/servers/docker-php7:latest
