@@ -2,6 +2,8 @@ FROM php:7.1.20-fpm
 
 ENV LANG=C.UTF-8
 
+RUN apt update && apt install -y gnupg
+
 RUN echo deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main > /etc/apt/sources.list.d/pgdg.list
 RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
