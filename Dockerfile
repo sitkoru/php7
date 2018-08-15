@@ -1,6 +1,11 @@
-FROM php:7.1.16-fpm
+FROM php:7.1.20-fpm
 
 ENV LANG=C.UTF-8
+
+RUN apt update && apt install -y gnupg
+
+RUN echo deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main > /etc/apt/sources.list.d/pgdg.list
+RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
 RUN apt update && apt install -y \
     libxml2-dev \
@@ -9,7 +14,7 @@ RUN apt update && apt install -y \
     libfreetype6-dev \
     libjpeg62-turbo \
     libjpeg-dev \
-    libpng12-0 \
+    libpng16-16 \
     libpng-dev \
     libxslt1.1 \
     libxslt-dev \
@@ -21,6 +26,7 @@ RUN apt update && apt install -y \
     locales-all \
     sudo \
     mysql-client \
+    postgresql-client-10 \
     duplicity \
     zip \
     libgmp-dev \
