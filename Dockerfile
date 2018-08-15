@@ -1,4 +1,4 @@
-FROM php:7.1.16-fpm
+FROM php:7.1.20-fpm
 
 ENV LANG=C.UTF-8
 
