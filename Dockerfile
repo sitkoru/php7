@@ -2,6 +2,9 @@ FROM php:7.1.16-fpm
 
 ENV LANG=C.UTF-8
 
+RUN echo deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main > /etc/apt/sources.list.d/pgdg.list
+RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+
 RUN apt update && apt install -y \
     libxml2-dev \
     zlib1g-dev \
@@ -21,6 +24,7 @@ RUN apt update && apt install -y \
     locales-all \
     sudo \
     mysql-client \
+    postgresql-client-10 \
     duplicity \
     zip \
     libgmp-dev \
