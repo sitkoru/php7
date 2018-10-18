@@ -1,6 +1,11 @@
-FROM php:7.1.16-fpm
+FROM php:7.1.20-fpm
 
 ENV LANG=C.UTF-8
+
+RUN apt update && apt install -y gnupg
+
+RUN echo deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main > /etc/apt/sources.list.d/pgdg.list
+RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
 RUN apt update && apt install -y \
     libxml2-dev \
@@ -9,7 +14,7 @@ RUN apt update && apt install -y \
     libfreetype6-dev \
     libjpeg62-turbo \
     libjpeg-dev \
-    libpng12-0 \
+    libpng16-16 \
     libpng-dev \
     libxslt1.1 \
     libxslt-dev \
@@ -21,10 +26,14 @@ RUN apt update && apt install -y \
     locales-all \
     sudo \
     mysql-client \
+    postgresql-client-10 \
     duplicity \
     zip \
+    libgmp-dev \
+    && ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/local/include/ \
+    && docker-php-ext-configure gmp \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-    && docker-php-ext-install pdo_pgsql pgsql soap zip xsl opcache pcntl gd bcmath pdo_mysql mysqli \
+    && docker-php-ext-install pdo_pgsql pgsql soap zip xsl opcache pcntl gd bcmath pdo_mysql mysqli gmp \
     && curl -fsS -o /tmp/icu.tgz -L http://download.icu-project.org/files/icu4c/59.1/icu4c-59_1-src.tgz \
     && tar -zxf /tmp/icu.tgz -C /tmp \
     && cd /tmp/icu/source \
