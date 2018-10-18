@@ -1,7 +1,7 @@
 FROM hub.0xdev.ru/servers/docker-php7
 
 RUN apt update \
-    && apt install -y $PHPIZE_DEPS openssh-server git \
+    && apt install -y $PHPIZE_DEPS \
     && pecl install xdebug \
     && apt purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $PHPIZE_DEPS \
     && apt-get clean \
