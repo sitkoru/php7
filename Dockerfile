@@ -1,4 +1,4 @@
-FROM php:7.1.23-fpm
+FROM php:7.2.14-fpm
 
 ENV LANG=C.UTF-8
 
@@ -45,7 +45,7 @@ RUN apt update && apt install -y \
     && PHP_CPPFLAGS="$PHP_CPPFLAGS -std=c++11" docker-php-ext-configure intl --with-icu-dir=/usr/local \
     # run configure and install in the same RUN line, they extract and clean up the php source to save space
     && PHP_CPPFLAGS="$PHP_CPPFLAGS -std=c++11" docker-php-ext-install intl \
-    && pecl install redis-4.0.0 \
+    && pecl install redis-4.2.0 \
     && docker-php-ext-enable redis \
     && apt purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
         autoconf \
