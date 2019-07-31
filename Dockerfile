@@ -25,7 +25,7 @@ RUN apt update && apt install -y \
     locales \
     locales-all \
     sudo \
-    mysql-client \
+    mariadb-client \
     postgresql-client-11 \
     duplicity \
     zip \
