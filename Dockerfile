@@ -1,4 +1,4 @@
-FROM php:7.2.14-fpm
+FROM php:7.2.20-fpm
 
 ENV LANG=C.UTF-8
 
@@ -26,7 +26,7 @@ RUN apt update && apt install -y \
     locales-all \
     sudo \
     mysql-client \
-    postgresql-client-10 \
+    postgresql-client-11 \
     duplicity \
     zip \
     libgmp-dev \
