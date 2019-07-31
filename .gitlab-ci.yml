@@ -9,10 +9,6 @@ variables:
 
 build:
   stage: build
-  tags:
-    - dind
-  services:
-    - docker:dind
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $HUB_URL
     - docker build --no-cache . -t $HUB_URL/servers/docker-php7:1.0.0-$CI_PIPELINE_ID
