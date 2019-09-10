@@ -1,4 +1,4 @@
-FROM php:7.2.20-fpm
+FROM php:7.2.22-fpm
 
 ENV LANG=C.UTF-8
 
@@ -49,21 +49,21 @@ RUN apt update && apt install -y \
     && pecl install redis-4.2.0 \
     && docker-php-ext-enable redis \
     && apt purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-        autoconf \
-        binutils \
-        gcc \
-        libc-dev \
-        g++ \
-        make \
-        libxml2-dev \
-        zlib1g-dev \
-        libfreetype6-dev \
-        libjpeg-dev \
-        libpng-dev \
-        libxslt-dev \
-        libxml2-dev \
-        libpq-dev \
-        libicu-dev \
+    autoconf \
+    binutils \
+    gcc \
+    libc-dev \
+    g++ \
+    make \
+    libxml2-dev \
+    zlib1g-dev \
+    libfreetype6-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libxslt-dev \
+    libxml2-dev \
+    libpq-dev \
+    libicu-dev \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN locale-gen ru_RU.UTF-8 && \
