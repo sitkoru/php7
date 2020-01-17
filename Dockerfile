@@ -1,4 +1,4 @@
-FROM php:7.2.22-fpm
+FROM php:7.2.26-fpm
 
 ENV LANG=C.UTF-8
 
@@ -24,7 +24,6 @@ RUN apt update && apt install -y \
     wget \
     locales \
     locales-all \
-    sudo \
     mariadb-client \
     postgresql-client-11 \
     duplicity \
@@ -78,9 +77,6 @@ COPY .bashrc /var/www/.bashrc
 
 RUN chown -R www-data:www-data /var/www
 
-RUN echo "www-data:www-data" | chpasswd && adduser www-data sudo
-RUN echo "www-data ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers
-
 RUN echo Europe/Moscow | tee /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
 
 RUN rm /usr/local/etc/php-fpm.d/www.conf.default && rm /usr/local/etc/php-fpm.d/www.conf
@@ -89,10 +85,12 @@ COPY php.ini /usr/local/etc/php/
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -- --filename=composer
 
-USER www-data
 WORKDIR /var/www
 
+USER www-data
 RUN composer global require "fxp/composer-asset-plugin:^1.4.2" --prefer-dist
 RUN composer global require "hirak/prestissimo:^0.3" --prefer-dist
+
+USER root
 
 CMD ["php-fpm"]
