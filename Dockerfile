@@ -34,7 +34,7 @@ RUN apt update && apt install -y \
     && ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/local/include/ \
     && docker-php-ext-configure gmp \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-    && docker-php-ext-install pdo_pgsql pgsql soap zip xsl opcache pcntl gd bcmath pdo_mysql mysqli gmp \
+    && docker-php-ext-install pdo_pgsql pgsql soap zip xsl opcache pcntl gd bcmath pdo_mysql mysqli gmp exif \
     && curl -fsS -o /tmp/icu.tgz -L https://github.com/unicode-org/icu/releases/download/release-64-2/icu4c-64_2-src.tgz \
     && tar -zxf /tmp/icu.tgz -C /tmp \
     && cd /tmp/icu/source \
