@@ -1,0 +1,7 @@
+FROM hub.0xdev.ru/servers/docker-php7
+
+COPY php_dev.ini /usr/local/etc/php/php.ini
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -- --filename=composer
+RUN composer global require "fxp/composer-asset-plugin:^1.4.2" --prefer-dist
+RUN composer global require "hirak/prestissimo:^0.3" --prefer-dist

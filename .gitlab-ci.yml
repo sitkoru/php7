@@ -11,9 +11,11 @@ build:
   stage: build
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $HUB_URL
-    - docker build --no-cache . -t $HUB_URL/servers/docker-php7:1.0.0-$CI_PIPELINE_ID
+    - docker build --no-cache . -t $HUB_URL/servers/docker-php7:1.0.0-$CI_PIPELINE_ID -t $HUB_URL/servers/docker-php7:latest
+    - docker build -f Dockerfile.Dev . -t $HUB_URL/servers/docker-php7/dev:1.0.0-$CI_PIPELINE_ID -t $HUB_URL/servers/docker-php7/dev:latest
     - docker build -f Dockerfile.Xdebug . -t $HUB_URL/servers/docker-php7/xdebug:1.0.0-$CI_PIPELINE_ID
     - docker push $HUB_URL/servers/docker-php7:1.0.0-$CI_PIPELINE_ID
+    - docker push $HUB_URL/servers/docker-php7/dev:1.0.0-$CI_PIPELINE_ID
     - docker push $HUB_URL/servers/docker-php7/xdebug:1.0.0-$CI_PIPELINE_ID
 
 deploy:
@@ -24,6 +26,9 @@ deploy:
     - docker pull $HUB_URL/servers/docker-php7:1.0.0-$CI_PIPELINE_ID
     - docker tag $HUB_URL/servers/docker-php7:1.0.0-$CI_PIPELINE_ID $HUB_URL/servers/docker-php7:latest
     - docker push $HUB_URL/servers/docker-php7:latest
+    - docker pull $HUB_URL/servers/docker-php7/dev:1.0.0-$CI_PIPELINE_ID
+    - docker tag $HUB_URL/servers/docker-php7/dev:1.0.0-$CI_PIPELINE_ID $HUB_URL/servers/docker-php7/dev:latest
+    - docker push $HUB_URL/servers/docker-php7/dev:latest
     - docker pull $HUB_URL/servers/docker-php7/xdebug:1.0.0-$CI_PIPELINE_ID
     - docker tag $HUB_URL/servers/docker-php7/xdebug:1.0.0-$CI_PIPELINE_ID $HUB_URL/servers/docker-php7/xdebug:latest
     - docker push $HUB_URL/servers/docker-php7/xdebug:latest
