@@ -2,14 +2,10 @@ FROM sitkoru/php7
 
 COPY php_dev.ini /usr/local/etc/php/php.ini
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -- --filename=composer
-RUN composer global require "fxp/composer-asset-plugin:^1.4.2" --prefer-dist
-RUN composer global require "hirak/prestissimo:^0.3" --prefer-dist
-
 USER root
 
 RUN apt update \
-    && apt install -y $PHPIZE_DEPS \
+    && apt install -y $PHPIZE_DEPS git \
     && pecl install xdebug \
     && apt purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $PHPIZE_DEPS \
     && apt-get clean \
@@ -17,4 +13,11 @@ RUN apt update \
 
 COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -- --filename=composer
+
 USER www-data
+
+RUN composer global require "fxp/composer-asset-plugin:^1.4.2" --prefer-dist
+RUN composer global require "hirak/prestissimo:^0.3" --prefer-dist
+
+
