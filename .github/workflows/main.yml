@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    container: docker.pkg.github.com/sitkoru/github-runner/runner:latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build php7 image
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_LOGIN }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+          repository: sitkoru/php7
+          tag_with_ref: true
+          tags: latest
+      - name: Build php7:dev image
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_LOGIN }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+          repository: sitkoru/php7
+          dockerfile: Dockerfile.Dev
+          tag_with_ref: true
+          tags: dev
