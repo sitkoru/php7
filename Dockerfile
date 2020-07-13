@@ -1,4 +1,4 @@
-FROM php:7.2.30-fpm
+FROM php:7.2.32-fpm
 
 ENV LANG=C.UTF-8
 
@@ -33,19 +33,8 @@ RUN apt update && apt install -y \
     && ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/local/include/ \
     && docker-php-ext-configure gmp \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-    && docker-php-ext-install pdo_pgsql pgsql soap zip xsl opcache pcntl gd bcmath pdo_mysql mysqli gmp exif \
-    && curl -fsS -o /tmp/icu.tgz -L https://github.com/unicode-org/icu/releases/download/release-64-2/icu4c-64_2-src.tgz \
-    && tar -zxf /tmp/icu.tgz -C /tmp \
-    && cd /tmp/icu/source \
-    && ./configure --prefix=/usr/local \
-    && make \
-    && make install \
-    # just to be certain things are cleaned up
-    && rm -rf /tmp/icu* \
-    && PHP_CPPFLAGS="$PHP_CPPFLAGS -std=c++11" docker-php-ext-configure intl --with-icu-dir=/usr/local \
-    # run configure and install in the same RUN line, they extract and clean up the php source to save space
-    && PHP_CPPFLAGS="$PHP_CPPFLAGS -std=c++11" docker-php-ext-install intl \
-    && pecl install redis-4.2.0 \
+    && docker-php-ext-install pdo_pgsql pgsql soap zip xsl opcache pcntl gd bcmath pdo_mysql mysqli gmp exif intl \
+    && pecl install redis \
     && docker-php-ext-enable redis \
     && apt purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     autoconf \
@@ -62,7 +51,6 @@ RUN apt update && apt install -y \
     libxslt-dev \
     libxml2-dev \
     libpq-dev \
-    libicu-dev \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN locale-gen ru_RU.UTF-8 && \
