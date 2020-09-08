@@ -1,4 +1,4 @@
-FROM php:7.2.32-fpm
+FROM php:7.3-fpm
 
 ENV LANG=C.UTF-8
 
@@ -14,19 +14,19 @@ RUN apt update && apt install -y \
     libfreetype6-dev \
     libjpeg62-turbo \
     libjpeg-dev \
+    libpng-tools \
     libpng16-16 \
     libpng-dev \
     libxslt1.1 \
     libxslt-dev \
     libpq5 \
     libpq-dev \
+    libzip4 \
+    libzip-dev \
     bash-completion \
     wget \
     locales \
     locales-all \
-    mariadb-client \
-    postgresql-client-11 \
-    duplicity \
     zip \
     libgmp-dev \
     python3-distutils \
@@ -36,6 +36,10 @@ RUN apt update && apt install -y \
     && docker-php-ext-install pdo_pgsql pgsql soap zip xsl opcache pcntl gd bcmath pdo_mysql mysqli gmp exif intl fileinfo \
     && pecl install redis \
     && docker-php-ext-enable redis \
+    && pecl install mongodb \
+    && docker-php-ext-enable mongodb \
+    && pecl install grpc \
+    && docker-php-ext-enable grpc \
     && apt purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     autoconf \
     binutils \
@@ -63,16 +67,4 @@ COPY opcache.conf /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
 COPY .bashrc /root/.bashrc
 COPY .bashrc /var/www/.bashrc
 
-RUN chown -R www-data:www-data /var/www
-
 RUN echo Europe/Moscow | tee /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
-
-RUN rm /usr/local/etc/php-fpm.d/www.conf.default && rm /usr/local/etc/php-fpm.d/www.conf
-COPY php-fpm.conf /usr/local/etc/php-fpm.conf
-COPY php.ini /usr/local/etc/php/
-
-WORKDIR /var/www
-
-USER root
-
-CMD ["php-fpm"]
