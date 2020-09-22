@@ -1,5 +1,3 @@
-PHP7 images for sitkoru sites
+# php7
 
-sitkoru/php7 for production
-
-sitkoru/php7:dev for development
+PHP7 images for sites
