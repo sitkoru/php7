@@ -23,7 +23,7 @@ RUN apt update && apt install -y \
     libpq-dev \
     libzip4 \
     libzip-dev \
-    libmemcached11 \
+    libmemcached-dev \
     bash-completion \
     wget \
     locales \
