@@ -23,6 +23,7 @@ RUN apt update && apt install -y \
     libpq-dev \
     libzip4 \
     libzip-dev \
+    libmemcached11 \
     bash-completion \
     wget \
     locales \
@@ -36,13 +37,17 @@ RUN apt update && apt install -y \
     && ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/local/include/ \
     && docker-php-ext-configure gmp \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-    && docker-php-ext-install pdo_pgsql pgsql soap zip xsl opcache pcntl gd bcmath pdo_mysql mysqli gmp exif intl fileinfo memcached \
+    && docker-php-ext-install pdo_pgsql pgsql soap zip xsl opcache pcntl gd bcmath pdo_mysql mysqli gmp exif intl fileinfo \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && pecl install mongodb \
     && docker-php-ext-enable mongodb \
     && pecl install grpc \
     && docker-php-ext-enable grpc \
+    && pecl install memcached-3.1.5 \
+    && docker-php-ext-enable memcached \
+    && pecl install memcache-4.0.5.2 \
+    && docker-php-ext-enable memcache \
     && apt purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     autoconf \
     binutils \
