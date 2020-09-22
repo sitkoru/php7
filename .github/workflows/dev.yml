@@ -1,4 +1,4 @@
-name: CI
+name: FPM
 
 on:
   schedule:
