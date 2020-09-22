@@ -80,7 +80,7 @@ WORKDIR /var/www
 
 CMD ["php-fpm"]
 
-FROM base as dev
+FROM fpm as dev
 
 RUN apt update \
     && apt install -y $PHPIZE_DEPS openssh-server git unzip rsync \
