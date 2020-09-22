@@ -1,4 +1,4 @@
-FROM php:7.3-fpm
+FROM php:7.3-fpm as fpm
 
 ENV LANG=C.UTF-8
 
@@ -68,3 +68,28 @@ COPY .bashrc /root/.bashrc
 COPY .bashrc /var/www/.bashrc
 
 RUN echo Europe/Moscow | tee /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
+
+RUN rm /usr/local/etc/php-fpm.d/www.conf.default && rm /usr/local/etc/php-fpm.d/www.conf
+COPY php-fpm.conf /usr/local/etc/php-fpm.conf
+COPY php.ini /usr/local/etc/php/
+
+WORKDIR /var/www
+
+CMD ["php-fpm"]
+
+FROM base as dev
+
+RUN apt update \
+    && apt install -y $PHPIZE_DEPS openssh-server git unzip rsync \
+    && pecl install xdebug ast \
+    && docker-php-ext-enable ast \
+    && apt purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $PHPIZE_DEPS \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+COPY config/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -- --filename=composer
+
+RUN composer global require "fxp/composer-asset-plugin:^1.4.2" --prefer-dist
+RUN composer global require "hirak/prestissimo:^0.3" --prefer-dist
