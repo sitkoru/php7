@@ -30,6 +30,9 @@ RUN apt update && apt install -y \
     zip \
     libgmp-dev \
     python3-distutils \
+    mariadb-client \
+    postgresql-client-11 \
+    duplicity \
     && ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/local/include/ \
     && docker-php-ext-configure gmp \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
