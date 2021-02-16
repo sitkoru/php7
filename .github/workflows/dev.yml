@@ -20,7 +20,7 @@ jobs:
       - name: Prepare
         id: prep
         run: |
-          DOCKER_IMAGE=ghcr.io/sitkoru/php7-dev
+          DOCKER_IMAGE=ghcr.io/sitkoru/php-dev
           VERSION=${{ matrix.version }}
           echo VERSION=${VERSION}
           MAJOR=`echo $VERSION | cut -d. -f1`

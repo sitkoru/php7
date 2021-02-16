@@ -1,3 +1,3 @@
-# php7
+# PHP
 
-PHP7 images for sites
+PHP images for sites
