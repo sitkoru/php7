@@ -37,7 +37,7 @@ RUN apt update && apt install -y \
     duplicity \
     && ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/local/include/ \
     && docker-php-ext-configure gmp \
-    && if [[ $PHP_VERSION =~ "7.3.*" ]]; docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/; else docker-php-ext-configure gd --with-freetype --with-jpeg; fi; \
+    && if [[ $PHP_VERSION =~ "7.3.*" ]]; then docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/; else docker-php-ext-configure gd --with-freetype --with-jpeg; fi; \
     && docker-php-ext-install pdo_pgsql pgsql soap zip xsl opcache pcntl gd bcmath pdo_mysql mysqli gmp exif intl fileinfo \
     && pecl install redis \
     && docker-php-ext-enable redis \
