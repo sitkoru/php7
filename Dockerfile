@@ -10,7 +10,7 @@ RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
 COPY install.sh /install.sh
 
-RUN bash /install.sh
+RUN PHP_VERSION=${PHP_VERSION} bash /install.sh
 
 COPY opcache.conf /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
 
