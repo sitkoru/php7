@@ -59,9 +59,11 @@ jobs:
           context: .
           file: ./Dockerfile
           tags: ${{ steps.prep.outputs.tags }}
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
+          build-args: |
+            PHP_VERSION=${{ matrix.version }}
           target: fpm
           labels: |
             org.opencontainers.image.title=${{ github.event.repository.name }}

@@ -1,4 +1,5 @@
-FROM php:7.3.24-fpm as base
+ARG PHP_VERSION=7
+FROM php:${PHP_VERSION}-fpm as base
 
 ENV LANG=C.UTF-8
 
