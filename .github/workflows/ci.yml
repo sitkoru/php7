@@ -30,7 +30,7 @@ jobs:
           REF=${GITHUB_REF#refs/tags/}
           if [[ $REF =~ ^v.*$ ]]; then
             TAGS="${DOCKER_IMAGE}:${VERSION},${DOCKER_IMAGE}:${MAJOR}.${MINOR}"
-            TAGS_DEV="${DOCKER_IMAGE}:${VERSION-dev,${DOCKER_IMAGE}:${MAJOR}.${MINOR}-dev"
+            TAGS_DEV="${DOCKER_IMAGE}:${VERSION}-dev,${DOCKER_IMAGE}:${MAJOR}.${MINOR}-dev"
           else
             TAGS="${DOCKER_IMAGE}:${VERSION}-${{ github.run_id }}"
             TAGS_DEV="${DOCKER_IMAGE}:${VERSION}-${{ github.run_id }}-dev"
