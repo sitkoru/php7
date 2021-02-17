@@ -1,5 +1,5 @@
 ARG PHP_VERSION=7
-FROM php:${PHP_VERSION}-fpm as base
+FROM php:${PHP_VERSION}-fpm as build
 
 ENV LANG=C.UTF-8
 
@@ -11,6 +11,26 @@ RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 COPY install.sh /install.sh
 
 RUN PHP_VERSION=${PHP_VERSION} bash /install.sh
+
+FROM php:${PHP_VERSION}-fpm as base
+
+RUN apt-get update \
+    && apt-get install -y bash-completion wget zip msmtp  \
+    libpng16-16 \ 
+    libjpeg62-turbo \
+    libfreetype6 \
+    libpq5 \
+    libzip4 \
+    libxslt1.1 \
+    && apt-get remove --purge --auto-remove -y && rm -rf /var/lib/apt/lists/*
+
+RUN locale-gen ru_RU.UTF-8 && \
+    update-locale LANG=ru_RU.UTF-8 && \
+    echo "LANGUAGE=ru_RU.UTF-8" >> /etc/default/locale && \
+    echo "LC_ALL=ru_RU.UTF-8" >> /etc/default/locale
+
+COPY --from=build /usr/local/etc/php/conf.d /usr/local/etc/php/conf.d
+COPY --from=build /usr/local/lib/php/extensions /usr/local/lib/php/extensions
 
 COPY opcache.conf /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
 

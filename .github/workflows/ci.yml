@@ -29,30 +29,26 @@ jobs:
           echo MINOR=${MINOR}
           REF=${GITHUB_REF#refs/tags/}
           if [[ $REF =~ ^v.*$ ]]; then
-            TAGS="${DOCKER_IMAGE}:${VERSION},${DOCKER_IMAGE}:${MAJOR}.${MINOR},${DOCKER_IMAGE}:${MAJOR}"
+            TAGS="${DOCKER_IMAGE}:${VERSION},${DOCKER_IMAGE}:${MAJOR}.${MINOR}"
+            TAGS_DEV="${DOCKER_IMAGE}:${VERSION-dev,${DOCKER_IMAGE}:${MAJOR}.${MINOR}-dev"
           else
-            TAGS="${DOCKER_IMAGE}:${VERSION}-${{ github.run_id }},${DOCKER_IMAGE}:${VERSION}-nightly"
+            TAGS="${DOCKER_IMAGE}:${VERSION}-${{ github.run_id }}"
+            TAGS_DEV="${DOCKER_IMAGE}:${VERSION}-${{ github.run_id }}-dev"
           fi
           echo ::set-output name=tags::${TAGS}
+          echo ::set-output name=tags_dev::${TAGS_DEV}
           echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
         with:
           driver-opts: image=moby/buildkit:master
-      - name: Cache Docker layers
-        uses: actions/cache@v2.1.4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_TOKEN }}
-      - name: Build and push
+      - name: Build fpm image
         id: docker_build
         uses: docker/build-push-action@v2
         with:
@@ -60,11 +56,29 @@ jobs:
           file: ./Dockerfile
           tags: ${{ steps.prep.outputs.tags }}
           push: true
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
           build-args: |
             PHP_VERSION=${{ matrix.version }}
           target: fpm
+          labels: |
+            org.opencontainers.image.title=${{ github.event.repository.name }}
+            org.opencontainers.image.description=${{ github.event.repository.description }}
+            org.opencontainers.image.url=${{ github.event.repository.html_url }}
+            org.opencontainers.image.source=${{ github.event.repository.clone_url }}
+            org.opencontainers.image.version=${{ matrix.version }}
+            org.opencontainers.image.created=${{ steps.prep.outputs.created }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
+      - name: Build dev image
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          tags: ${{ steps.prep.outputs.tags_dev }}
+          push: true
+          build-args: |
+            PHP_VERSION=${{ matrix.version }}
+          target: dev
           labels: |
             org.opencontainers.image.title=${{ github.event.repository.name }}
             org.opencontainers.image.description=${{ github.event.repository.description }}
