@@ -22,6 +22,8 @@ RUN apt-get update \
     libpq5 \
     libzip4 \
     libxslt1.1 \
+    locales \
+    locales-all \
     && apt-get remove --purge --auto-remove -y && rm -rf /var/lib/apt/lists/*
 
 RUN locale-gen ru_RU.UTF-8 && \
