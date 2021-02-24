@@ -25,6 +25,7 @@ RUN apt-get update \
     locales \
     locales-all \
     libmemcached11 \
+    libmemcachedutil2 \
     && apt-get remove --purge --auto-remove -y && rm -rf /var/lib/apt/lists/*
 
 RUN locale-gen ru_RU.UTF-8 && \
