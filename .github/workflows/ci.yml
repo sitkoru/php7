@@ -31,12 +31,15 @@ jobs:
           if [[ $REF =~ ^v.*$ ]]; then
             TAGS="${DOCKER_IMAGE}:${VERSION},${DOCKER_IMAGE}:${MAJOR}.${MINOR}"
             TAGS_DEV="${DOCKER_IMAGE}:${VERSION}-dev,${DOCKER_IMAGE}:${MAJOR}.${MINOR}-dev"
+            TAGS_SSH="${DOCKER_IMAGE}:${VERSION}-ssh,${DOCKER_IMAGE}:${MAJOR}.${MINOR}-ssh"
           else
             TAGS="${DOCKER_IMAGE}:${VERSION}-${{ github.run_id }}"
             TAGS_DEV="${DOCKER_IMAGE}:${VERSION}-${{ github.run_id }}-dev"
+            TAGS_SSH="${DOCKER_IMAGE}:${VERSION}-${{ github.run_id }}-ssh"
           fi
           echo ::set-output name=tags::${TAGS}
           echo ::set-output name=tags_dev::${TAGS_DEV}
+          echo ::set-output name=tags_ssh::${TAGS_SSH}
           echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -77,6 +80,25 @@ jobs:
           build-args: |
             PHP_VERSION=${{ matrix.version }}
           target: dev
+          labels: |
+            org.opencontainers.image.title=${{ github.event.repository.name }}
+            org.opencontainers.image.description=${{ github.event.repository.description }}
+            org.opencontainers.image.url=${{ github.event.repository.html_url }}
+            org.opencontainers.image.source=${{ github.event.repository.clone_url }}
+            org.opencontainers.image.version=${{ matrix.version }}
+            org.opencontainers.image.created=${{ steps.prep.outputs.created }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
+      - name: Build ssh image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          tags: ${{ steps.prep.outputs.tags_ssh }}
+          push: true
+          build-args: |
+            PHP_VERSION=${{ matrix.version }}
+          target: ssh
           labels: |
             org.opencontainers.image.title=${{ github.event.repository.name }}
             org.opencontainers.image.description=${{ github.event.repository.description }}

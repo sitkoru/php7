@@ -66,3 +66,21 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -
 FROM base as fpm 
 
 COPY php.ini /usr/local/etc/php/
+
+FROM fpm as ssh
+
+COPY ssh-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+RUN apt update \
+    && apt install -y openssh-server rsync \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN mkdir /run/sshd
+RUN sed -i "s/UsePrivilegeSeparation.*/UsePrivilegeSeparation no/g" /etc/ssh/sshd_config \ 
+    && sed -i "s/UsePAM.*/UsePAM no/g" /etc/ssh/sshd_config \
+    && sed -i "s/#PermitRootLogin.*/PermitRootLogin yes/g" /etc/ssh/sshd_config \
+    && sed -i "s/#AuthorizedKeysFile/AuthorizedKeysFile/g" /etc/ssh/sshd_config
+
+CMD ["/docker-entrypoint.sh"]
