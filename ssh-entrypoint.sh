@@ -4,6 +4,6 @@ php-fpm >/var/log/php-fpm.log 2>&1 &
 
 touch /var/log/sshd.log
 /usr/bin/ssh-keygen -A
-/usr/sbin/sshd >/var/log/sshd.log 2>&1 &
+/usr/sbin/sshd -D -e >/var/log/sshd.log 2>&1 &
 
 tail -f /var/log/php-fpm.log
