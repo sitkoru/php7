@@ -24,6 +24,7 @@ RUN apt-get update \
     libxslt1.1 \
     locales \
     locales-all \
+    libmemcached11 \
     && apt-get remove --purge --auto-remove -y && rm -rf /var/lib/apt/lists/*
 
 RUN locale-gen ru_RU.UTF-8 && \
