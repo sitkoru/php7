@@ -86,3 +86,49 @@ RUN sed -i "s/UsePrivilegeSeparation.*/UsePrivilegeSeparation no/g" /etc/ssh/ssh
     && sed -i "s/#AuthorizedKeysFile/AuthorizedKeysFile/g" /etc/ssh/sshd_config
 
 CMD ["/docker-entrypoint.sh"]
+
+# NGINX BASE IMAGE
+
+FROM nginx:${NGINX_VERSION} as nginx-build
+
+ENV OSSL_VERSION 1.1.1g
+ENV CODENAME buster
+
+RUN apt-get update \
+    && apt-get install -y build-essential zlib1g-dev libpcre3 libpcre3-dev unzip wget libcurl4-openssl-dev libjansson-dev uuid-dev libbrotli-dev
+
+RUN wget http://nginx.org/keys/nginx_signing.key \
+    && apt-key add nginx_signing.key \
+    && echo "deb http://nginx.org/packages/mainline/debian/ ${CODENAME} nginx" >> /etc/apt/sources.list \
+    && echo "deb-src http://nginx.org/packages/mainline/debian/ ${CODENAME} nginx" >> /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get build-dep -y nginx=${NGINX_VERSION}-1
+
+WORKDIR /nginx
+
+ADD ./nginx/build.sh build.sh
+
+RUN chmod a+x ./build.sh && ./build.sh
+
+# NGINX IMAGE
+
+FROM fpm as nginx
+
+COPY --from=nginx-build /nginx/nginx_*.deb /_pkgs/
+
+RUN apt-get update \
+    && apt-get install -y lsb-base gnupg1 ca-certificates gettext-base curl \
+    && apt-get remove --purge --auto-remove -y && rm -rf /var/lib/apt/lists/* /etc/apt/sources.list.d/nginx.list
+
+
+RUN dpkg --install /_pkgs/*.deb && rm -rf /_pkgs
+
+ADD nginx/docker-entrypoint.sh /usr/bin/docker-entrypoint.sh
+RUN chmod +x /usr/bin/docker-entrypoint.sh
+
+RUN rm /etc/nginx/conf.d/default.conf
+COPY nginx/php.conf /etc/nginx/php.conf
+
+EXPOSE 80
+
+CMD "/usr/bin/docker-entrypoint.sh"
