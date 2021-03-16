@@ -89,7 +89,7 @@ CMD ["/docker-entrypoint.sh"]
 
 # NGINX BASE IMAGE
 
-FROM nginx:${NGINX_VERSION} as nginx-build
+FROM nginx:latest as nginx-build
 
 ENV OSSL_VERSION 1.1.1g
 ENV CODENAME buster
