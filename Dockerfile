@@ -112,7 +112,7 @@ RUN chmod a+x ./build.sh && ./build.sh
 
 # NGINX IMAGE
 
-FROM fpm as nginx
+FROM fpm as with-nginx
 
 COPY --from=nginx-build /nginx/nginx_*.deb /_pkgs/
 
