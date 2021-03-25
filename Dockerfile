@@ -23,15 +23,15 @@ RUN apt-get update \
     libzip4 \
     libxslt1.1 \
     locales \
-    locales-all \
     libmemcached11 \
     libmemcachedutil2 \
     && apt-get remove --purge --auto-remove -y && rm -rf /var/lib/apt/lists/*
-
-RUN locale-gen ru_RU.UTF-8 && \
-    update-locale LANG=ru_RU.UTF-8 && \
-    echo "LANGUAGE=ru_RU.UTF-8" >> /etc/default/locale && \
-    echo "LC_ALL=ru_RU.UTF-8" >> /etc/default/locale
+RUN echo ru_RU.UTF-8 UTF-8 >> /etc/locale.gen
+RUN echo en_US.UTF-8 UTF-8 > /etc/locale.gen \
+    && echo ru_RU.UTF-8 UTF-8 >> /etc/locale.gen \
+    && locale-gen ru_RU.UTF-8 \
+    && echo "LANGUAGE=ru_RU.UTF-8" >> /etc/default/locale \
+    && echo "LC_ALL=ru_RU.UTF-8" >> /etc/default/locale
 
 COPY --from=build /usr/local/etc/php/conf.d /usr/local/etc/php/conf.d
 COPY --from=build /usr/local/lib/php/extensions /usr/local/lib/php/extensions
@@ -47,7 +47,7 @@ RUN rm /usr/local/etc/php-fpm.d/www.conf.default && rm /usr/local/etc/php-fpm.d/
 COPY php-fpm.conf /usr/local/etc/php-fpm.conf
 RUN sed -i "s/php_version/php${PHP_VERSION}/g" /usr/local/etc/php-fpm.conf
 
-RUN curl https://getmic.ro | bash && cp micro /usr/local/bin/micro
+RUN curl https://getmic.ro | bash && mv micro /usr/local/bin/micro
 COPY micro.json /root/.config/micro/settings.json
 
 WORKDIR /var/www
