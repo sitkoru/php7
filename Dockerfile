@@ -25,7 +25,10 @@ RUN apt-get update \
     locales \
     libmemcached11 \
     libmemcachedutil2 \
-    && apt-get remove --purge --auto-remove -y && rm -rf /var/lib/apt/lists/*
+    && apt purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $PHPIZE_DEPS \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    
 RUN echo ru_RU.UTF-8 UTF-8 >> /etc/locale.gen
 RUN echo en_US.UTF-8 UTF-8 > /etc/locale.gen \
     && echo ru_RU.UTF-8 UTF-8 >> /etc/locale.gen \
