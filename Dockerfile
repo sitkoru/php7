@@ -47,6 +47,9 @@ RUN rm /usr/local/etc/php-fpm.d/www.conf.default && rm /usr/local/etc/php-fpm.d/
 COPY php-fpm.conf /usr/local/etc/php-fpm.conf
 RUN sed -i "s/php_version/php${PHP_VERSION}/g" /usr/local/etc/php-fpm.conf
 
+RUN curl https://getmic.ro | bash && cp micro /usr/local/bin/micro
+COPY micro.json /root/.config/micro/settings.json
+
 WORKDIR /var/www
 
 CMD ["php-fpm"]
