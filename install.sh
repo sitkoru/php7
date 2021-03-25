@@ -28,5 +28,4 @@ apt update && apt install -y \
     && docker-php-ext-enable memcached \
     && if [[ $PHP_VERSION =~ $memcachepat ]]; then pecl install memcache-8.0; else pecl install memcache-4.0.5.2; fi \
     && docker-php-ext-enable memcache \
-    # strip debug information for extensions
     && strip --strip-debug $(php-config --extension-dir)/*.so
